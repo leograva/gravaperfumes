@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3><center> Perfumes </center></h3>
+<form name ="" method="POST">{% csrf_token %}
+    <div class="form-group">
+      <label for="exampleFormControlSelect1">Perfume</label>
+      <select name="perfume" class="form-control" id="exampleFormControlSelect1">
+        <option> - Selecione o perfume - </option>
+        {% for perfume in perfumes %}
+          <option value="{{perfume.id}}"> {{ perfume.nome }} {{ perfume.tamanho.nome }} - {{ perfume.tipo }} - {{perfume.fabricante.nome}} </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="exampleFormControlSelect1">Cliente</label>
+      <select name="cliente" class="form-control" id="exampleFormControlSelect1">
+        <option> - Selecione o cliente - </option>
+        {% for cliente in clientes %}
+          <option value="{{cliente.id}}"> {{ cliente.nome }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="exampleFormControlInput1">Preço de custo (R$)</label>
+      <input name="preco_de_custo" type="text" class="form-control" id="exampleFormControlInput1" placeholder="Digite o preço de custo do perfume">
+    </div>
+
+    <div class="form-group">
+      <label for="exampleFormControlInput1">Preço de venda (R$)</label>
+      <input name="preco_de_venda" type="text" class="form-control" id="exampleFormControlInput1" placeholder="Digite o preço de venda do perfume">
+    </div>
+
+    <div class="form-group">
+      <br>
+      <input type="submit" value="Cadastrar">
+    </div>  
+  </form>
+  {% if messages %}
+  {% for m in messages %}
+      <div class="alert alert-warning" role="alert">
+        {{ m }}
+      </div>
+  {% endfor %}
+  {% endif %}
+<div class="table-wrapper-scroll-y my-custom-scrollbar">
+  <table class="table table-striped mb-1">
+      <thead>
+          <tr>
+              <th scope="col">Nome do cliente</th>
+              <th scope="col">Perfume</th>
+              <th scope="col">Preço de custo</th>
+              <th scope="col">Preço de venda</th>
+              <th scope="col">Data da venda</th>
+              <th scope="col">Excluir</th>
+          </tr>
+      </thead>
+          {% for venda in vendas %}
+          <tbody>
+              <tr>
+                <td>{{ venda.cliente.nome }}</td>  
+                <td>{{ venda.perfume.nome }}</td>
+                  
+                  <td>R$ {{ venda.preco_custo }}</td>
+                  <td>R$ {{ venda.preco_venda }}</td>
+                  <td>{{ venda.data_venda }}</td>
+                  <td><a href="{% url 'deletar_venda' id=venda.id %}">Excluir</a></td>
+              </tr>
+          </tbody>
+          {% endfor %}
+  </table>
+</div>
+{% endblock %}
