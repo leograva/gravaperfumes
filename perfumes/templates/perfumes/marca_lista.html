@@ -1,0 +1,48 @@
+{% extends 'perfumes/base.html' %}
+{% block title %}Marcas - Grava Perfumes{% endblock %}
+{% block content %}
+<div class="space-y-6">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <h1 class="text-3xl font-bold text-grava-purple">Marcas</h1>
+            <p class="text-gray-500 mt-1">Gerencie as marcas de perfumes</p>
+        </div>
+        <a href="{% url 'marca_criar' %}" class="btn-grava px-5 py-2.5 rounded-lg shadow-grava text-sm font-medium">
+            <i class="fas fa-plus mr-2"></i>Nova Marca
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for marca in marcas %}
+        <div class="card-grava rounded-2xl shadow-grava-lg p-6 hover-lift">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 rounded-xl gradient-purple-grava flex items-center justify-center">
+                    <i class="fas fa-tag text-white text-xl"></i>
+                </div>
+                <span class="badge-status bg-purple-100 text-purple-700">
+                    {{ marca.qtd_perfumes }} perfumes
+                </span>
+            </div>
+            <h3 class="text-xl font-bold text-grava-purple mb-2">{{ marca.nome }}</h3>
+            {% if marca.descricao %}
+            <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ marca.descricao }}</p>
+            {% endif %}
+            <a href="{% url 'marca_editar' marca.pk %}" class="block w-full bg-grava-purple text-white text-center py-2.5 rounded-lg hover:bg-opacity-90 transition text-sm font-medium">
+                <i class="fas fa-edit mr-2"></i>Editar
+            </a>
+        </div>
+        {% empty %}
+        <div class="col-span-3 card-grava rounded-2xl shadow-grava-lg p-12 text-center">
+            <div class="w-16 h-16 rounded-2xl gradient-purple-grava flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-tag text-white text-2xl"></i>
+            </div>
+            <p class="text-gray-500 text-lg font-medium mb-2">Nenhuma marca cadastrada</p>
+            <p class="text-gray-400 text-sm mb-6">Comece adicionando marcas de perfumes</p>
+            <a href="{% url 'marca_criar' %}" class="btn-grava px-6 py-3 rounded-lg inline-block">
+                <i class="fas fa-plus mr-2"></i>Nova Marca
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

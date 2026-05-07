@@ -1,0 +1,72 @@
+{% extends 'perfumes/base.html' %}
+{% block title %}Vendas{% endblock %}
+{% block content %}
+<div class="space-y-6">
+    <div class="flex justify-between items-center">
+        <h1 class="text-4xl font-bold text-gray-800"><i class="fas fa-shopping-cart text-purple-600 mr-3"></i>Vendas</h1>
+        <a href="{% url 'venda_criar' %}" class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-lg hover:shadow-lg transform hover:scale-105 transition">
+            <i class="fas fa-plus mr-2"></i>Nova Venda
+        </a>
+    </div>
+    <div class="bg-white rounded-xl shadow-lg p-6">
+        <form method="get" class="mb-6">
+            <div class="flex gap-4">
+                <select name="status" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                    <option value="">Todos os status</option>
+                    {% for value, label in status_choices %}
+                    <option value="{{ value }}" {% if request.GET.status == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700">
+                    <i class="fas fa-filter"></i> Filtrar
+                </button>
+            </div>
+        </form>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-sm font-semibold">ID</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold">Cliente</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold">Data</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold">Status</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold">Valor Total</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold">Ações</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    {% for venda in vendas %}
+                    <tr class="hover:bg-purple-50 transition">
+                        <td class="px-6 py-4 text-sm font-bold text-gray-900">#{{ venda.id }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-900">{{ venda.cliente.nome }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-600">{{ venda.data_venda|date:"d/m/Y H:i" }}</td>
+                        <td class="px-6 py-4">
+                            <span class="px-3 py-1 text-xs font-semibold rounded-full
+                                {% if venda.status == 'E' %}bg-green-100 text-green-800
+                                {% elif venda.status == 'C' %}bg-blue-100 text-blue-800
+                                {% elif venda.status == 'P' %}bg-yellow-100 text-yellow-800
+                                {% else %}bg-red-100 text-red-800{% endif %}">
+                                {{ venda.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-sm font-bold text-green-600">R$ {{ venda.valor_total|floatformat:2 }}</td>
+                        <td class="px-6 py-4">
+                            <a href="{% url 'venda_detalhe' venda.pk %}" class="text-purple-600 hover:text-purple-900 font-medium">
+                                <i class="fas fa-eye"></i> Ver Detalhes
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-12">
+                            <i class="fas fa-shopping-cart text-gray-300 text-6xl mb-4"></i>
+                            <p class="text-gray-500 text-lg">Nenhuma venda encontrada</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

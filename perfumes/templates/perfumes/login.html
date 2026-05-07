@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Grava Perfumes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        .gradient-grava {
+            background: linear-gradient(135deg, #FF8A65 0%, #FFB199 100%);
+        }
+        
+        .gradient-purple-grava {
+            background: linear-gradient(135deg, #3D2E52 0%, #4A3A5F 100%);
+        }
+        
+        .bg-pattern {
+            background-color: #fafafa;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(232, 213, 196, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(255, 138, 101, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(61, 46, 82, 0.03) 0%, transparent 50%);
+        }
+        
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(232, 213, 196, 0.3);
+        }
+        
+        .btn-grava {
+            background: linear-gradient(135deg, #FF8A65 0%, #FF7043 100%);
+            color: #ffffff;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-grava:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 138, 101, 0.3);
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'grava-coral': '#FF8A65',
+                        'grava-beige': '#E8D5C4',
+                        'grava-purple': '#3D2E52',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-pattern min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+        <!-- Logo e Título -->
+        <div class="text-center mb-8">
+            {% load static %}
+            <img src="{% static 'perfumes/img/logo.jpg' %}" alt="Grava Perfumes" class="w-20 h-20 rounded-2xl mx-auto mb-4 shadow-lg">
+            <h1 class="text-3xl font-bold text-grava-purple mb-2">Grava Perfumes</h1>
+            <p class="text-gray-500">Sistema de Gestão de Vendas</p>
+        </div>
+
+        <!-- Card de Login -->
+        <div class="login-card rounded-2xl shadow-2xl p-8">
+            <h2 class="text-2xl font-bold text-grava-purple mb-6 text-center">Entrar no Sistema</h2>
+            
+            {% if error %}
+            <div class="bg-red-50 border-l-4 border-red-500 rounded-lg p-4 mb-6">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-circle text-red-500 mr-3"></i>
+                    <p class="text-red-700 text-sm">{{ error }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <!-- Usuário -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-user mr-2 text-grava-coral"></i>Usuário
+                    </label>
+                    <input 
+                        type="text" 
+                        name="username" 
+                        required
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-grava-coral focus:border-grava-coral transition"
+                        placeholder="Digite seu usuário"
+                    >
+                </div>
+
+                <!-- Senha -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-lock mr-2 text-grava-coral"></i>Senha
+                    </label>
+                    <input 
+                        type="password" 
+                        name="password" 
+                        required
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-grava-coral focus:border-grava-coral transition"
+                        placeholder="Digite sua senha"
+                    >
+                </div>
+
+                <!-- Botão de Login -->
+                <button 
+                    type="submit" 
+                    class="w-full btn-grava py-3 rounded-lg font-medium shadow-lg"
+                >
+                    <i class="fas fa-sign-in-alt mr-2"></i>Entrar
+                </button>
+            </form>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-8 text-gray-500 text-sm">
+            <p>&copy; 2026 Grava Perfumes. Todos os direitos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>

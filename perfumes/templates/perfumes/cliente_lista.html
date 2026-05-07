@@ -1,0 +1,98 @@
+{% extends 'perfumes/base.html' %}
+{% block title %}Clientes - Grava Perfumes{% endblock %}
+{% block content %}
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <h1 class="text-3xl font-bold text-grava-purple">Clientes</h1>
+            <p class="text-gray-500 mt-1">Gerencie seus clientes cadastrados</p>
+        </div>
+        <a href="{% url 'cliente_criar' %}" class="btn-grava px-5 py-2.5 rounded-lg shadow-grava text-sm font-medium">
+            <i class="fas fa-plus mr-2"></i>Novo Cliente
+        </a>
+    </div>
+
+    <!-- Busca -->
+    <div class="card-grava rounded-2xl shadow-grava-lg p-6">
+        <form method="get" class="flex gap-4">
+            <div class="flex-1">
+                <input 
+                    type="text" 
+                    name="busca" 
+                    placeholder="Buscar por nome, celular ou Instagram..." 
+                    value="{{ request.GET.busca }}"
+                    class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-grava-coral focus:border-grava-coral transition text-sm"
+                >
+            </div>
+            <button type="submit" class="btn-grava px-6 py-2.5 rounded-lg text-sm font-medium">
+                <i class="fas fa-search mr-2"></i>Buscar
+            </button>
+        </form>
+    </div>
+
+    <!-- Grid de Clientes -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for cliente in clientes %}
+        <div class="card-grava rounded-2xl shadow-grava-lg p-6 hover-lift">
+            <div class="flex items-start justify-between mb-4">
+                <div class="w-12 h-12 rounded-xl gradient-beige-grava flex items-center justify-center">
+                    <i class="fas fa-user text-grava-purple text-xl"></i>
+                </div>
+                <span class="badge-status bg-purple-100 text-purple-700">
+                    {{ cliente.get_genero_display }}
+                </span>
+            </div>
+            
+            <h3 class="text-lg font-bold text-grava-purple mb-3">{{ cliente.nome }}</h3>
+            
+            <div class="space-y-2 text-sm text-gray-600 mb-4">
+                <p class="flex items-center gap-2">
+                    <i class="fas fa-phone text-grava-coral w-4"></i>
+                    <span>{{ cliente.celular }}</span>
+                </p>
+                {% if cliente.instagram %}
+                <p class="flex items-center gap-2">
+                    <i class="fab fa-instagram text-grava-coral w-4"></i>
+                    <span>{{ cliente.instagram }}</span>
+                </p>
+                {% endif %}
+            </div>
+            
+            <div class="border-t border-gray-100 pt-4 mt-4">
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <p class="text-xs text-gray-500">Compras</p>
+                        <p class="text-lg font-bold text-grava-purple">{{ cliente.qtd_compras }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500">Total gasto</p>
+                        <p class="text-lg font-bold text-grava-coral">R$ {{ cliente.total_gasto|default:"0.00"|floatformat:2 }}</p>
+                    </div>
+                </div>
+                
+                <div class="flex gap-2">
+                    <a href="{% url 'cliente_detalhe' cliente.pk %}" class="flex-1 bg-grava-purple text-white text-center py-2 rounded-lg hover:bg-opacity-90 transition text-sm font-medium">
+                        <i class="fas fa-eye mr-1"></i>Ver
+                    </a>
+                    <a href="{% url 'cliente_editar' cliente.pk %}" class="flex-1 bg-gray-100 text-gray-700 text-center py-2 rounded-lg hover:bg-gray-200 transition text-sm font-medium">
+                        <i class="fas fa-edit mr-1"></i>Editar
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-3 card-grava rounded-2xl shadow-grava-lg p-12 text-center">
+            <div class="w-16 h-16 rounded-2xl gradient-beige-grava flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-users text-grava-purple text-2xl"></i>
+            </div>
+            <p class="text-gray-500 text-lg font-medium mb-2">Nenhum cliente encontrado</p>
+            <p class="text-gray-400 text-sm mb-6">Comece cadastrando seu primeiro cliente</p>
+            <a href="{% url 'cliente_criar' %}" class="btn-grava px-6 py-3 rounded-lg inline-block">
+                <i class="fas fa-plus mr-2"></i>Novo Cliente
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
