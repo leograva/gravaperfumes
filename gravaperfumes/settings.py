@@ -16,6 +16,12 @@ DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 
+# CSRF trusted origins para HTTPS
+CSRF_TRUSTED_ORIGINS = os.environ.get(
+    'CSRF_TRUSTED_ORIGINS',
+    'https://gravaperfumes.h5udoo.easypanel.host'
+).split(',')
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
