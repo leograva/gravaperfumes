@@ -8,9 +8,46 @@
             <h1 class="text-3xl font-bold text-grava-purple">Venda #{{ venda.id }}</h1>
             <p class="text-gray-500 mt-1">{{ venda.data_venda|date:"d/m/Y \à\s H:i" }} · {{ venda.cliente.nome }}</p>
         </div>
-        <a href="{% url 'venda_lista' %}" class="bg-gray-100 text-gray-700 px-5 py-2.5 rounded-lg hover:bg-gray-200 transition text-sm font-medium">
-            <i class="fas fa-arrow-left mr-2"></i>Voltar
-        </a>
+        <div class="flex gap-3">
+            <a href="{% url 'venda_lista' %}" class="bg-gray-100 text-gray-700 px-5 py-2.5 rounded-lg hover:bg-gray-200 transition text-sm font-medium">
+                <i class="fas fa-arrow-left mr-2"></i>Voltar
+            </a>
+            <!-- Botão Deletar -->
+            <button onclick="document.getElementById('modal-deletar').classList.remove('hidden')"
+                class="bg-red-50 text-red-600 px-5 py-2.5 rounded-lg hover:bg-red-100 transition text-sm font-medium border border-red-200">
+                <i class="fas fa-trash mr-2"></i>Excluir
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal de confirmação de exclusão -->
+    <div id="modal-deletar" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <!-- Overlay -->
+        <div class="absolute inset-0 bg-black bg-opacity-40 backdrop-blur-sm"
+             onclick="document.getElementById('modal-deletar').classList.add('hidden')"></div>
+        <!-- Card -->
+        <div class="relative card-grava rounded-2xl shadow-2xl p-8 max-w-md w-full z-10">
+            <div class="w-14 h-14 rounded-2xl bg-red-100 flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-trash text-red-500 text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-grava-purple text-center mb-2">Excluir Venda #{{ venda.id }}?</h3>
+            <p class="text-gray-500 text-sm text-center mb-6">
+                Esta ação é irreversível. Todos os itens desta venda serão removidos permanentemente.
+            </p>
+            <div class="flex gap-3">
+                <button onclick="document.getElementById('modal-deletar').classList.add('hidden')"
+                    class="flex-1 bg-gray-100 text-gray-700 py-3 rounded-lg hover:bg-gray-200 transition font-medium text-sm">
+                    Cancelar
+                </button>
+                <form method="post" action="{% url 'venda_deletar' venda.pk %}" class="flex-1">
+                    {% csrf_token %}
+                    <button type="submit"
+                        class="w-full bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 transition font-medium text-sm">
+                        <i class="fas fa-trash mr-2"></i>Sim, excluir
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">

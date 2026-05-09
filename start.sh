@@ -1,19 +1,19 @@
-#!/bin/bash
+#!/bin/sh
 
-echo "🚀 Iniciando Grava Perfumes..."
-
-# Aguardar banco de dados estar pronto
-echo "⏳ Aguardando banco de dados..."
+echo "Aguardando banco de dados..."
 sleep 5
 
-# Executar migrações
-echo "📦 Executando migrações..."
+echo "Executando migracoes..."
 python manage.py migrate --noinput
 
-# Coletar arquivos estáticos
-echo "📁 Coletando arquivos estáticos..."
+echo "Coletando arquivos estaticos..."
 python manage.py collectstatic --noinput
 
-# Iniciar Gunicorn
-echo "✅ Iniciando servidor..."
-gunicorn --bind 0.0.0.0:8000 --workers 3 --timeout 120 gravaperfumes.wsgi:application
+echo "Iniciando servidor Gunicorn..."
+exec gunicorn gravaperfumes.wsgi:application \
+    --bind 0.0.0.0:8000 \
+    --workers 2 \
+    --timeout 120 \
+    --log-level info \
+    --access-logfile - \
+    --error-logfile -

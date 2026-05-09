@@ -30,4 +30,5 @@ urlpatterns = [
     path('vendas/nova/', views.venda_criar, name='venda_criar'),
     path('vendas/<int:pk>/', views.venda_detalhe, name='venda_detalhe'),
     path('vendas/<int:pk>/status/', views.venda_editar_status, name='venda_editar_status'),
+    path('vendas/<int:pk>/deletar/', views.venda_deletar, name='venda_deletar'),
 ]

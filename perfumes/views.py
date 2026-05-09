@@ -2,61 +2,113 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.db.models import Sum, Count, F, Q
-from django.http import JsonResponse
+from django.db.models import Sum, Count, Q
+from django.utils import timezone
+from datetime import date, timedelta
 from decimal import Decimal
 from .models import Marca, Perfume, Cliente, Venda, ItemVenda
 from .forms import MarcaForm, PerfumeForm, ClienteForm, VendaForm, ItemVendaFormSet
 
 
 def login_view(request):
-    """View de login"""
     if request.user.is_authenticated:
         return redirect('dashboard')
-    
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
-        
         if user is not None:
             login(request, user)
             return redirect('dashboard')
         else:
-            return render(request, 'perfumes/login.html', {
-                'error': 'Usuário ou senha incorretos'
-            })
-    
+            return render(request, 'perfumes/login.html', {'error': 'Usuário ou senha incorretos'})
     return render(request, 'perfumes/login.html')
 
 
 def logout_view(request):
-    """View de logout"""
     logout(request)
     return redirect('login')
 
 
 @login_required(login_url='login')
 def dashboard(request):
-    """Dashboard principal com estatísticas"""
-    total_vendas = Venda.objects.filter(status__in=['C', 'E']).aggregate(
+    hoje = timezone.now().date()
+
+    # --- Período selecionado ---
+    periodo = request.GET.get('periodo', 'mes')
+    data_inicio_str = request.GET.get('data_inicio', '')
+    data_fim_str = request.GET.get('data_fim', '')
+
+    if periodo == 'hoje':
+        data_inicio = hoje
+        data_fim = hoje
+    elif periodo == 'semana':
+        data_inicio = hoje - timedelta(days=6)
+        data_fim = hoje
+    elif periodo == 'mes':
+        data_inicio = hoje.replace(day=1)
+        data_fim = hoje
+    elif periodo == 'trimestre':
+        data_inicio = (hoje - timedelta(days=89)).replace(day=1)
+        data_fim = hoje
+    elif periodo == 'ano':
+        data_inicio = hoje.replace(month=1, day=1)
+        data_fim = hoje
+    elif periodo == 'personalizado' and data_inicio_str and data_fim_str:
+        try:
+            data_inicio = date.fromisoformat(data_inicio_str)
+            data_fim = date.fromisoformat(data_fim_str)
+        except ValueError:
+            data_inicio = hoje.replace(day=1)
+            data_fim = hoje
+    else:
+        data_inicio = hoje.replace(day=1)
+        data_fim = hoje
+
+    # --- Queryset filtrado pelo período ---
+    vendas_periodo = Venda.objects.filter(
+        data_venda__date__gte=data_inicio,
+        data_venda__date__lte=data_fim,
+    )
+
+    total_vendas = vendas_periodo.filter(status__in=['C', 'E']).aggregate(
         total=Sum('valor_total')
     )['total'] or Decimal('0.00')
-    
+
+    total_lucro = Decimal('0.00')
+    for v in vendas_periodo.filter(status__in=['C', 'E']).prefetch_related('itens'):
+        total_lucro += v.calcular_lucro()
+
+    qtd_vendas_periodo = vendas_periodo.count()
+    ticket_medio = (total_vendas / qtd_vendas_periodo) if qtd_vendas_periodo else Decimal('0.00')
+
+    # --- Totais gerais (não filtrados por período) ---
     total_clientes = Cliente.objects.filter(ativo=True).count()
     total_perfumes = Perfume.objects.filter(ativo=True).count()
-    vendas_mes = Venda.objects.filter(
-        data_venda__month=Venda.objects.latest('data_venda').data_venda.month
-    ).count() if Venda.objects.exists() else 0
-    
-    vendas_recentes = Venda.objects.select_related('cliente').prefetch_related('itens')[:5]
-    
+
+    # --- Vendas recentes do período ---
+    vendas_recentes = vendas_periodo.select_related('cliente').order_by('-data_venda')[:8]
+
     context = {
         'total_vendas': total_vendas,
+        'total_lucro': total_lucro,
+        'ticket_medio': ticket_medio,
+        'qtd_vendas_periodo': qtd_vendas_periodo,
         'total_clientes': total_clientes,
         'total_perfumes': total_perfumes,
-        'vendas_mes': vendas_mes,
         'vendas_recentes': vendas_recentes,
+        'periodo': periodo,
+        'data_inicio': data_inicio.isoformat(),
+        'data_fim': data_fim.isoformat(),
+        'data_inicio_fmt': data_inicio.strftime('%d/%m/%Y'),
+        'data_fim_fmt': data_fim.strftime('%d/%m/%Y'),
+        'periodo_opcoes': [
+            ('hoje', 'Hoje'),
+            ('semana', 'Últimos 7 dias'),
+            ('mes', 'Este mês'),
+            ('trimestre', 'Trimestre'),
+            ('ano', 'Este ano'),
+        ],
     }
     return render(request, 'perfumes/dashboard.html', context)
 
@@ -279,3 +331,14 @@ def venda_editar_status(request, pk):
             venda.save()
             messages.success(request, 'Status atualizado com sucesso!')
         return redirect('venda_detalhe', pk=pk)
+
+
+@login_required(login_url='login')
+def venda_deletar(request, pk):
+    venda = get_object_or_404(Venda, pk=pk)
+    if request.method == 'POST':
+        numero = venda.id
+        venda.delete()
+        messages.success(request, f'Venda #{numero} excluída com sucesso.')
+        return redirect('venda_lista')
+    return redirect('venda_detalhe', pk=pk)
