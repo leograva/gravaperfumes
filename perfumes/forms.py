@@ -9,17 +9,14 @@ class MarcaForm(forms.ModelForm):
         fields = ['nome', 'descricao', 'ativo']
         widgets = {
             'nome': forms.TextInput(attrs={
-                'class': 'w-full px-4 py-2 border-2 border-grava-beige rounded-lg focus:ring-2 focus:ring-grava-coral focus:border-grava-coral',
+                'class': 'w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm',
                 'placeholder': 'Nome da marca'
             }),
             'descricao': forms.Textarea(attrs={
-                'class': 'w-full px-4 py-2 border-2 border-grava-beige rounded-lg focus:ring-2 focus:ring-grava-coral focus:border-grava-coral',
-                'rows': 3,
-                'placeholder': 'Descrição da marca'
+                'class': 'w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm',
+                'rows': 3, 'placeholder': 'Descrição da marca'
             }),
-            'ativo': forms.CheckboxInput(attrs={
-                'class': 'w-4 h-4 text-grava-coral focus:ring-grava-coral border-grava-beige rounded'
-            })
+            'ativo': forms.CheckboxInput(attrs={'class': 'w-4 h-4 rounded'})
         }
 
 
@@ -29,26 +26,17 @@ class PerfumeForm(forms.ModelForm):
         fields = ['nome', 'marca', 'genero', 'tamanho_ml', 'descricao', 'ativo']
         widgets = {
             'nome': forms.TextInput(attrs={
-                'class': 'w-full px-4 py-2 border-2 border-grava-beige rounded-lg focus:ring-2 focus:ring-grava-coral focus:border-grava-coral',
+                'class': 'w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm',
                 'placeholder': 'Nome do perfume'
             }),
-            'marca': forms.Select(attrs={
-                'class': 'w-full px-4 py-2 border-2 border-grava-beige rounded-lg focus:ring-2 focus:ring-grava-coral focus:border-grava-coral'
-            }),
-            'genero': forms.Select(attrs={
-                'class': 'w-full px-4 py-2 border-2 border-grava-beige rounded-lg focus:ring-2 focus:ring-grava-coral focus:border-grava-coral'
-            }),
-            'tamanho_ml': forms.Select(attrs={
-                'class': 'w-full px-4 py-2 border-2 border-grava-beige rounded-lg focus:ring-2 focus:ring-grava-coral focus:border-grava-coral'
-            }),
+            'marca': forms.Select(attrs={'class': 'w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm'}),
+            'genero': forms.Select(attrs={'class': 'w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm'}),
+            'tamanho_ml': forms.Select(attrs={'class': 'w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm'}),
             'descricao': forms.Textarea(attrs={
-                'class': 'w-full px-4 py-2 border-2 border-grava-beige rounded-lg focus:ring-2 focus:ring-grava-coral focus:border-grava-coral',
-                'rows': 3,
-                'placeholder': 'Descrição do perfume'
+                'class': 'w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm',
+                'rows': 3, 'placeholder': 'Descrição do perfume'
             }),
-            'ativo': forms.CheckboxInput(attrs={
-                'class': 'w-4 h-4 text-grava-coral focus:ring-grava-coral border-grava-beige rounded'
-            })
+            'ativo': forms.CheckboxInput(attrs={'class': 'w-4 h-4 rounded'})
         }
 
 
@@ -58,32 +46,27 @@ class ClienteForm(forms.ModelForm):
         fields = ['nome', 'genero', 'instagram', 'celular', 'email', 'observacoes', 'ativo']
         widgets = {
             'nome': forms.TextInput(attrs={
-                'class': 'w-full px-4 py-2 border-2 border-grava-beige rounded-lg focus:ring-2 focus:ring-grava-coral focus:border-grava-coral',
+                'class': 'w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm',
                 'placeholder': 'Nome completo'
             }),
-            'genero': forms.Select(attrs={
-                'class': 'w-full px-4 py-2 border-2 border-grava-beige rounded-lg focus:ring-2 focus:ring-grava-coral focus:border-grava-coral'
-            }),
+            'genero': forms.Select(attrs={'class': 'w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm'}),
             'instagram': forms.TextInput(attrs={
-                'class': 'w-full px-4 py-2 border-2 border-grava-beige rounded-lg focus:ring-2 focus:ring-grava-coral focus:border-grava-coral',
+                'class': 'w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm',
                 'placeholder': '@usuario'
             }),
             'celular': forms.TextInput(attrs={
-                'class': 'w-full px-4 py-2 border-2 border-grava-beige rounded-lg focus:ring-2 focus:ring-grava-coral focus:border-grava-coral',
+                'class': 'w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm',
                 'placeholder': '(00) 00000-0000'
             }),
             'email': forms.EmailInput(attrs={
-                'class': 'w-full px-4 py-2 border-2 border-grava-beige rounded-lg focus:ring-2 focus:ring-grava-coral focus:border-grava-coral',
+                'class': 'w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm',
                 'placeholder': 'email@exemplo.com'
             }),
             'observacoes': forms.Textarea(attrs={
-                'class': 'w-full px-4 py-2 border-2 border-grava-beige rounded-lg focus:ring-2 focus:ring-grava-coral focus:border-grava-coral',
-                'rows': 3,
-                'placeholder': 'Observações sobre o cliente'
+                'class': 'w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm',
+                'rows': 3, 'placeholder': 'Observações sobre o cliente'
             }),
-            'ativo': forms.CheckboxInput(attrs={
-                'class': 'w-4 h-4 text-grava-coral focus:ring-grava-coral border-grava-beige rounded'
-            })
+            'ativo': forms.CheckboxInput(attrs={'class': 'w-4 h-4 rounded'})
         }
 
 
@@ -92,16 +75,11 @@ class VendaForm(forms.ModelForm):
         model = Venda
         fields = ['cliente', 'status', 'observacoes']
         widgets = {
-            'cliente': forms.Select(attrs={
-                'class': 'w-full px-4 py-2 border-2 border-grava-beige rounded-lg focus:ring-2 focus:ring-grava-coral focus:border-grava-coral'
-            }),
-            'status': forms.Select(attrs={
-                'class': 'w-full px-4 py-2 border-2 border-grava-beige rounded-lg focus:ring-2 focus:ring-grava-coral focus:border-grava-coral'
-            }),
+            'cliente': forms.Select(attrs={'class': 'w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm'}),
+            'status': forms.Select(attrs={'class': 'w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm'}),
             'observacoes': forms.Textarea(attrs={
-                'class': 'w-full px-4 py-2 border-2 border-grava-beige rounded-lg focus:ring-2 focus:ring-grava-coral focus:border-grava-coral',
-                'rows': 3,
-                'placeholder': 'Observações sobre a venda'
+                'class': 'w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm',
+                'rows': 3, 'placeholder': 'Observações sobre a venda'
             })
         }
 
@@ -111,22 +89,17 @@ class ItemVendaForm(forms.ModelForm):
         model = ItemVenda
         fields = ['perfume', 'quantidade', 'preco_custo', 'preco_venda']
         widgets = {
-            'perfume': forms.Select(attrs={
-                'class': 'w-full px-3 py-2 border-2 border-grava-beige rounded-lg focus:ring-2 focus:ring-grava-coral focus:border-grava-coral text-sm'
-            }),
+            'perfume': forms.Select(attrs={'class': 'w-full px-3 py-2 border border-gray-200 rounded-lg text-sm'}),
             'quantidade': forms.NumberInput(attrs={
-                'class': 'w-full px-3 py-2 border-2 border-grava-beige rounded-lg focus:ring-2 focus:ring-grava-coral focus:border-grava-coral text-sm',
-                'min': 1
+                'class': 'w-full px-3 py-2 border border-gray-200 rounded-lg text-sm', 'min': 1
             }),
             'preco_custo': forms.NumberInput(attrs={
-                'class': 'w-full px-3 py-2 border-2 border-grava-beige rounded-lg focus:ring-2 focus:ring-grava-coral focus:border-grava-coral text-sm',
-                'step': '0.01',
-                'min': '0'
+                'class': 'w-full px-3 py-2 border border-gray-200 rounded-lg text-sm',
+                'step': '0.01', 'min': '0', 'placeholder': '0.00'
             }),
             'preco_venda': forms.NumberInput(attrs={
-                'class': 'w-full px-3 py-2 border-2 border-grava-beige rounded-lg focus:ring-2 focus:ring-grava-coral focus:border-grava-coral text-sm',
-                'step': '0.01',
-                'min': '0'
+                'class': 'w-full px-3 py-2 border border-gray-200 rounded-lg text-sm',
+                'step': '0.01', 'min': '0', 'placeholder': '0.00'
             })
         }
 

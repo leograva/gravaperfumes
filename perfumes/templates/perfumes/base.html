@@ -10,179 +10,165 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        * {
-            font-family: 'Roboto', sans-serif;
+        /* ─── Paleta Grava Perfumes (novo logo monocromático) ─── */
+        :root {
+            --charcoal:       #3D3D3D;   /* cinza carvão — cor principal */
+            --charcoal-light: #5A5A5A;   /* carvão médio */
+            --charcoal-soft:  #F2F2F0;   /* fundo quase branco */
+            --gold:           #C9A84C;   /* dourado — destaque */
+            --gold-light:     #E8D08A;   /* dourado claro */
+            --gold-pale:      #FAF3DC;   /* dourado pálido — fundo sutil */
+            --white:          #FFFFFF;
+            --border:         #E5E5E3;
         }
-        
-        .logo-text {
-            font-family: 'Roboto', sans-serif;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-        
-        .gradient-grava {
-            background: linear-gradient(135deg, #FF8A65 0%, #FFB199 100%);
-        }
-        
-        .gradient-purple-grava {
-            background: linear-gradient(135deg, #3D2E52 0%, #4A3A5F 100%);
-        }
-        
-        .gradient-beige-grava {
-            background: linear-gradient(135deg, #E8D5C4 0%, #F0E5D8 100%);
-        }
-        
-        .text-grava-coral {
-            color: #FF8A65;
-        }
-        
-        .text-grava-beige {
-            color: #E8D5C4;
-        }
-        
-        .text-grava-purple {
-            color: #3D2E52;
-        }
-        
-        .border-grava-coral {
-            border-color: #FF8A65;
-        }
-        
-        .border-grava-beige {
-            border-color: #E8D5C4;
-        }
-        
-        .bg-grava-coral {
-            background-color: #FF8A65;
-        }
-        
-        .bg-grava-beige {
-            background-color: #E8D5C4;
-        }
-        
-        .bg-grava-purple {
-            background-color: #3D2E52;
-        }
-        
-        .shadow-grava {
-            box-shadow: 0 4px 20px rgba(255, 138, 101, 0.15);
-        }
-        
-        .shadow-grava-purple {
-            box-shadow: 0 4px 20px rgba(61, 46, 82, 0.15);
-        }
-        
-        .shadow-grava-lg {
-            box-shadow: 0 10px 40px rgba(61, 46, 82, 0.12);
-        }
-        
+
+        * { font-family: 'Roboto', sans-serif; }
+
+        /* Gradientes */
+        .gradient-gold    { background: linear-gradient(135deg, #C9A84C 0%, #E8D08A 100%); }
+        .gradient-charcoal{ background: linear-gradient(135deg, #3D3D3D 0%, #5A5A5A 100%); }
+        .gradient-soft    { background: linear-gradient(135deg, #F2F2F0 0%, #E8E8E6 100%); }
+
+        /* Textos */
+        .text-grava-gold    { color: var(--gold); }
+        .text-grava-charcoal{ color: var(--charcoal); }
+
+        /* Bordas */
+        .border-grava-gold    { border-color: var(--gold); }
+        .border-grava-charcoal{ border-color: var(--charcoal); }
+
+        /* Backgrounds */
+        .bg-grava-gold     { background-color: var(--gold); }
+        .bg-grava-charcoal { background-color: var(--charcoal); }
+        .bg-grava-soft     { background-color: var(--charcoal-soft); }
+
+        /* Sombras */
+        .shadow-grava    { box-shadow: 0 4px 20px rgba(201, 168, 76, 0.18); }
+        .shadow-grava-lg { box-shadow: 0 8px 32px rgba(61, 61, 61, 0.10); }
+
+        /* Card padrão */
         .card-grava {
-            background: #ffffff;
-            border: 1px solid rgba(232, 213, 196, 0.3);
-            backdrop-filter: blur(10px);
+            background: var(--white);
+            border: 1px solid var(--border);
         }
-        
+
+        /* Botão principal */
         .btn-grava {
-            background: linear-gradient(135deg, #FF8A65 0%, #FF7043 100%);
+            background: linear-gradient(135deg, #3D3D3D 0%, #5A5A5A 100%);
             color: #ffffff;
             font-weight: 500;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
+            letter-spacing: 0.3px;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
-        
         .btn-grava:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(255, 138, 101, 0.3);
+            box-shadow: 0 8px 24px rgba(61, 61, 61, 0.25);
+            background: linear-gradient(135deg, #2a2a2a 0%, #3D3D3D 100%);
         }
-        
+
+        /* Botão dourado */
+        .btn-gold {
+            background: linear-gradient(135deg, #C9A84C 0%, #E8D08A 100%);
+            color: #3D3D3D;
+            font-weight: 600;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(201, 168, 76, 0.35);
+        }
+
+        /* Navbar */
         .navbar-grava {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(232, 213, 196, 0.3);
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
         }
-        
+
+        /* Background da página */
         .bg-pattern {
-            background-color: #fafafa;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(232, 213, 196, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 90% 80%, rgba(255, 138, 101, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 50% 50%, rgba(61, 46, 82, 0.03) 0%, transparent 50%);
+            background-color: var(--charcoal-soft);
+            background-image:
+                radial-gradient(circle at 15% 25%, rgba(201, 168, 76, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 85% 75%, rgba(61, 61, 61, 0.04) 0%, transparent 50%);
         }
-        
-        .stat-card {
-            position: relative;
-            overflow: hidden;
-        }
-        
+
+        /* Stat card */
+        .stat-card { position: relative; overflow: hidden; }
         .stat-card::before {
             content: '';
             position: absolute;
-            top: 0;
-            right: 0;
-            width: 100px;
-            height: 100px;
-            background: radial-gradient(circle, rgba(255, 138, 101, 0.1) 0%, transparent 70%);
+            top: -20px; right: -20px;
+            width: 90px; height: 90px;
+            background: radial-gradient(circle, rgba(201, 168, 76, 0.08) 0%, transparent 70%);
             border-radius: 50%;
-            transform: translate(30%, -30%);
         }
-        
-        .hover-lift {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
+
+        /* Hover lift */
+        .hover-lift { transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
         .hover-lift:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(61, 46, 82, 0.15);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 36px rgba(61, 61, 61, 0.12);
         }
-        
+
+        /* Icon wrapper */
         .icon-wrapper {
-            width: 56px;
-            height: 56px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 16px;
-            font-size: 24px;
+            width: 52px; height: 52px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 14px;
+            font-size: 22px;
+            flex-shrink: 0;
         }
-        
+
+        /* Badge */
         .badge-status {
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            padding: 4px 12px;
-            border-radius: 12px;
+            font-size: 11px; font-weight: 600;
+            letter-spacing: 0.4px;
+            padding: 3px 10px;
+            border-radius: 10px;
+            display: inline-block;
         }
-        
+
+        /* Inputs */
+        input[type="text"], input[type="email"], input[type="number"],
+        input[type="password"], input[type="date"], select, textarea {
+            border: 1.5px solid var(--border) !important;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--gold) !important;
+            box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.12) !important;
+            outline: none !important;
+        }
+
         /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: #FF8A65;
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: #FF7043;
-        }
+        ::-webkit-scrollbar { width: 7px; height: 7px; }
+        ::-webkit-scrollbar-track { background: var(--charcoal-soft); }
+        ::-webkit-scrollbar-thumb { background: #C9A84C; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #b8943a; }
+
+        /* Linha de destaque dourada */
+        .gold-accent { border-left: 3px solid var(--gold); }
     </style>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: '#FF8A65',
-                        secondary: '#3D2E52',
-                        'grava-coral': '#FF8A65',
-                        'grava-beige': '#E8D5C4',
-                        'grava-purple': '#3D2E52',
-                        'grava-purple-light': '#4A3A5F',
+                        'grava-gold':     '#C9A84C',
+                        'grava-charcoal': '#3D3D3D',
+                        'grava-soft':     '#F2F2F0',
+                        'grava-border':   '#E5E5E3',
+                        /* aliases para não quebrar templates antigos */
+                        'grava-coral':    '#C9A84C',
+                        'grava-purple':   '#3D3D3D',
+                        'grava-beige':    '#F2F2F0',
                     }
                 }
             }
@@ -190,44 +176,56 @@
     </script>
 </head>
 <body class="bg-pattern min-h-screen">
+
     <!-- Navbar -->
     <nav class="navbar-grava shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
+
+                <!-- Logo -->
                 <div class="flex items-center">
                     <a href="{% url 'dashboard' %}" class="flex items-center space-x-3">
                         {% load static %}
-                        <img src="{% static 'perfumes/img/logo.jpg' %}" alt="Grava Perfumes" class="w-10 h-10 rounded-lg object-cover shadow-sm">
-                        <span class="logo-text text-xl text-grava-purple">
+                        <img src="{% static 'perfumes/img/logo.jpeg' %}" alt="Grava Perfumes"
+                             class="w-9 h-9 object-contain">
+                        <span class="text-xl font-bold text-grava-charcoal tracking-tight">
                             Grava Perfumes
                         </span>
                     </a>
                 </div>
-                
+
+                <!-- Nav links -->
                 <div class="hidden md:flex items-center space-x-1">
-                    <a href="{% url 'dashboard' %}" class="px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-grava-coral transition font-medium text-sm">
-                        <i class="fas fa-home mr-2"></i>Dashboard
+                    <a href="{% url 'dashboard' %}"
+                       class="px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-grava-charcoal transition font-medium text-sm">
+                        <i class="fas fa-home mr-2 text-grava-gold"></i>Dashboard
                     </a>
-                    <a href="{% url 'venda_lista' %}" class="px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-grava-coral transition font-medium text-sm">
-                        <i class="fas fa-shopping-cart mr-2"></i>Vendas
+                    <a href="{% url 'venda_lista' %}"
+                       class="px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-grava-charcoal transition font-medium text-sm">
+                        <i class="fas fa-shopping-cart mr-2 text-grava-gold"></i>Vendas
                     </a>
-                    <a href="{% url 'cliente_lista' %}" class="px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-grava-coral transition font-medium text-sm">
-                        <i class="fas fa-users mr-2"></i>Clientes
+                    <a href="{% url 'cliente_lista' %}"
+                       class="px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-grava-charcoal transition font-medium text-sm">
+                        <i class="fas fa-users mr-2 text-grava-gold"></i>Clientes
                     </a>
-                    <a href="{% url 'perfume_lista' %}" class="px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-grava-coral transition font-medium text-sm">
-                        <i class="fas fa-spray-can mr-2"></i>Perfumes
+                    <a href="{% url 'perfume_lista' %}"
+                       class="px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-grava-charcoal transition font-medium text-sm">
+                        <i class="fas fa-spray-can mr-2 text-grava-gold"></i>Perfumes
                     </a>
-                    <a href="{% url 'marca_lista' %}" class="px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-grava-coral transition font-medium text-sm">
-                        <i class="fas fa-tag mr-2"></i>Marcas
+                    <a href="{% url 'marca_lista' %}"
+                       class="px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-grava-charcoal transition font-medium text-sm">
+                        <i class="fas fa-tag mr-2 text-grava-gold"></i>Marcas
                     </a>
                 </div>
-                
+
+                <!-- Ações -->
                 <div class="flex items-center gap-3">
-                    <a href="{% url 'venda_criar' %}" class="btn-grava px-5 py-2.5 rounded-lg shadow-grava text-sm font-medium">
+                    <a href="{% url 'venda_criar' %}" class="btn-grava px-5 py-2.5 rounded-lg text-sm">
                         <i class="fas fa-plus mr-2"></i>Nova Venda
                     </a>
-                    <a href="{% url 'logout' %}" class="px-4 py-2 rounded-lg text-gray-700 hover:bg-red-50 hover:text-red-600 transition font-medium text-sm">
-                        <i class="fas fa-sign-out-alt mr-2"></i>Sair
+                    <a href="{% url 'logout' %}"
+                       class="px-3 py-2 rounded-lg text-gray-500 hover:bg-red-50 hover:text-red-500 transition text-sm">
+                        <i class="fas fa-sign-out-alt"></i>
                     </a>
                 </div>
             </div>
@@ -236,13 +234,13 @@
 
     <!-- Messages -->
     {% if messages %}
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 space-y-2">
         {% for message in messages %}
-        <div class="bg-white border-l-4 border-grava-coral rounded-lg shadow-grava p-4 mb-4 flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full gradient-grava flex items-center justify-center flex-shrink-0">
-                <i class="fas fa-check text-white"></i>
+        <div class="bg-white border-l-4 border-grava-gold rounded-lg shadow-grava p-4 flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full gradient-gold flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-check text-white text-sm"></i>
             </div>
-            <p class="text-gray-700 font-medium">{{ message }}</p>
+            <p class="text-gray-700 font-medium text-sm">{{ message }}</p>
         </div>
         {% endfor %}
     </div>
@@ -254,10 +252,10 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white mt-12 py-6 border-t border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p class="text-grava-purple font-medium">&copy; 2026 Grava Perfumes</p>
-            <p class="text-gray-500 text-sm mt-1">Sistema de Gestão de Vendas</p>
+    <footer class="bg-white mt-12 py-5 border-t border-grava-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+            <p class="text-gray-500 text-sm">&copy; 2026 Grava Perfumes</p>
+            <p class="text-gray-400 text-xs">Sistema de Gestão de Vendas</p>
         </div>
     </footer>
 
