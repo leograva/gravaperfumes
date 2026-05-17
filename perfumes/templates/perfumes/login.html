@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Grava Perfumes</title>
+    {% load static %}
+    <link rel="icon" type="image/jpeg" href="{% static 'perfumes/img/logo.jpeg' %}">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -39,7 +41,6 @@
 
         <!-- Logo -->
         <div class="text-center mb-8">
-            {% load static %}
             <img src="{% static 'perfumes/img/logo.jpeg' %}" alt="Grava Perfumes"
                  class="w-20 h-20 object-contain mx-auto mb-5">
             <h1 class="text-2xl font-bold text-gray-800 tracking-tight">Grava Perfumes</h1>

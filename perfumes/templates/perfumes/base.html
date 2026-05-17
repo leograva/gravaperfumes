@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Grava Perfumes{% endblock %}</title>
+    {% load static %}
+    <link rel="icon" type="image/jpeg" href="{% static 'perfumes/img/logo.jpeg' %}">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -185,7 +187,6 @@
                 <!-- Logo -->
                 <div class="flex items-center">
                     <a href="{% url 'dashboard' %}" class="flex items-center space-x-3">
-                        {% load static %}
                         <img src="{% static 'perfumes/img/logo.jpeg' %}" alt="Grava Perfumes"
                              class="w-9 h-9 object-contain">
                         <span class="text-xl font-bold text-grava-charcoal tracking-tight">
