@@ -89,35 +89,32 @@ def dashboard(request):
     # --- Vendas recentes do período ---
     vendas_recentes = vendas_periodo.select_related('cliente').order_by('-data_venda')[:8]
 
-    # --- Dados para o gráfico (agrupado por mês dentro do período) ---
+    # --- Dados para o gráfico (agrupado por mês, só confirmadas/entregues) ---
     from django.db.models.functions import TruncMonth
     import json
 
+    vendas_confirmadas = vendas_periodo.filter(status__in=['C', 'E'])
+
     vendas_por_mes = (
-        vendas_periodo
+        vendas_confirmadas
         .annotate(mes=TruncMonth('data_venda'))
         .values('mes')
         .annotate(total=Sum('valor_total'))
         .order_by('mes')
     )
 
-    # Calcula lucro por mês iterando pelas vendas agrupadas
     lucro_por_mes_dict = {}
-    for v in vendas_periodo.prefetch_related('itens'):
+    for v in vendas_confirmadas.prefetch_related('itens'):
         mes_key = v.data_venda.strftime('%Y-%m')
         lucro_por_mes_dict[mes_key] = lucro_por_mes_dict.get(mes_key, Decimal('0')) + v.calcular_lucro()
 
-    labels_grafico = []
-    dados_vendas   = []
-    dados_lucro    = []
-
     MESES_PT = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']
+    labels_grafico, dados_vendas, dados_lucro = [], [], []
 
     for item in vendas_por_mes:
         mes_dt  = item['mes']
         mes_key = mes_dt.strftime('%Y-%m')
-        label   = f"{MESES_PT[mes_dt.month - 1]}/{mes_dt.strftime('%y')}"
-        labels_grafico.append(label)
+        labels_grafico.append(f"{MESES_PT[mes_dt.month - 1]}/{mes_dt.strftime('%y')}")
         dados_vendas.append(float(item['total'] or 0))
         dados_lucro.append(float(lucro_por_mes_dict.get(mes_key, 0)))
 
