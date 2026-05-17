@@ -112,6 +112,41 @@
         </div>
     </div>
 
+    <!-- Gráfico: Vendas e Lucro por Mês -->
+    <div class="card-grava rounded-2xl shadow-grava-lg p-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
+            <div>
+                <h2 class="text-lg font-bold text-grava-charcoal">Vendas & Lucro por Mês</h2>
+                <p class="text-sm text-gray-500 mt-0.5">{{ data_inicio_fmt }} até {{ data_fim_fmt }}</p>
+            </div>
+            <!-- Legenda -->
+            <div class="flex items-center gap-5 text-sm">
+                <span class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-sm inline-block" style="background:#3D3D3D"></span>
+                    <span class="text-gray-600 font-medium">Faturamento</span>
+                </span>
+                <span class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-sm inline-block" style="background:#C9A84C"></span>
+                    <span class="text-gray-600 font-medium">Lucro</span>
+                </span>
+            </div>
+        </div>
+
+        {% if labels_grafico != "[]" %}
+        <div class="relative" style="height: 280px;">
+            <canvas id="graficoVendas"></canvas>
+        </div>
+        {% else %}
+        <div class="flex flex-col items-center justify-center py-14 text-center">
+            <div class="icon-wrapper gradient-soft mb-4">
+                <i class="fas fa-chart-bar text-gray-400 text-xl"></i>
+            </div>
+            <p class="text-gray-500 font-medium">Sem dados para exibir</p>
+            <p class="text-gray-400 text-sm mt-1">Nenhuma venda encontrada no período selecionado</p>
+        </div>
+        {% endif %}
+    </div>
+
     <!-- Ações Rápidas -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <a href="{% url 'venda_criar' %}" class="card-grava rounded-2xl shadow-grava-lg p-5 hover-lift group border-2 border-transparent hover:border-grava-coral transition-all">
@@ -228,4 +263,88 @@
         {% endif %}
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+{% if labels_grafico != "[]" %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+(function () {
+    const labels = {{ labels_grafico|safe }};
+    const vendas = {{ dados_vendas|safe }};
+    const lucro  = {{ dados_lucro|safe }};
+
+    const ctx = document.getElementById('graficoVendas').getContext('2d');
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Faturamento (R$)',
+                    data: vendas,
+                    backgroundColor: 'rgba(61, 61, 61, 0.85)',
+                    borderRadius: 6,
+                    borderSkipped: false,
+                    order: 2,
+                },
+                {
+                    label: 'Lucro (R$)',
+                    data: lucro,
+                    backgroundColor: 'rgba(201, 168, 76, 0.90)',
+                    borderRadius: 6,
+                    borderSkipped: false,
+                    order: 1,
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#fff',
+                    titleColor: '#3D3D3D',
+                    bodyColor: '#5A5A5A',
+                    borderColor: '#E5E5E3',
+                    borderWidth: 1,
+                    padding: 12,
+                    cornerRadius: 10,
+                    callbacks: {
+                        label: function(ctx) {
+                            const val = ctx.parsed.y.toLocaleString('pt-BR', {
+                                style: 'currency', currency: 'BRL'
+                            });
+                            return `  ${ctx.dataset.label}: ${val}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    border: { display: false },
+                    ticks: { color: '#9CA3AF', font: { family: 'Roboto', size: 12 } }
+                },
+                y: {
+                    grid: { color: 'rgba(0,0,0,0.05)' },
+                    border: { display: false, dash: [4, 4] },
+                    ticks: {
+                        color: '#9CA3AF',
+                        font: { family: 'Roboto', size: 12 },
+                        callback: function(val) {
+                            if (val >= 1000) return 'R$ ' + (val / 1000).toFixed(1) + 'k';
+                            return 'R$ ' + val;
+                        }
+                    }
+                }
+            }
+        }
+    });
+})();
+</script>
+{% endif %}
 {% endblock %}

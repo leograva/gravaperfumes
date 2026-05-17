@@ -89,6 +89,38 @@ def dashboard(request):
     # --- Vendas recentes do período ---
     vendas_recentes = vendas_periodo.select_related('cliente').order_by('-data_venda')[:8]
 
+    # --- Dados para o gráfico (agrupado por mês dentro do período) ---
+    from django.db.models.functions import TruncMonth
+    import json
+
+    vendas_por_mes = (
+        vendas_periodo
+        .annotate(mes=TruncMonth('data_venda'))
+        .values('mes')
+        .annotate(total=Sum('valor_total'))
+        .order_by('mes')
+    )
+
+    # Calcula lucro por mês iterando pelas vendas agrupadas
+    lucro_por_mes_dict = {}
+    for v in vendas_periodo.prefetch_related('itens'):
+        mes_key = v.data_venda.strftime('%Y-%m')
+        lucro_por_mes_dict[mes_key] = lucro_por_mes_dict.get(mes_key, Decimal('0')) + v.calcular_lucro()
+
+    labels_grafico = []
+    dados_vendas   = []
+    dados_lucro    = []
+
+    MESES_PT = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']
+
+    for item in vendas_por_mes:
+        mes_dt  = item['mes']
+        mes_key = mes_dt.strftime('%Y-%m')
+        label   = f"{MESES_PT[mes_dt.month - 1]}/{mes_dt.strftime('%y')}"
+        labels_grafico.append(label)
+        dados_vendas.append(float(item['total'] or 0))
+        dados_lucro.append(float(lucro_por_mes_dict.get(mes_key, 0)))
+
     context = {
         'total_vendas': total_vendas,
         'total_lucro': total_lucro,
@@ -103,12 +135,15 @@ def dashboard(request):
         'data_inicio_fmt': data_inicio.strftime('%d/%m/%Y'),
         'data_fim_fmt': data_fim.strftime('%d/%m/%Y'),
         'periodo_opcoes': [
-            ('hoje', 'Hoje'),
-            ('semana', 'Últimos 7 dias'),
-            ('mes', 'Este mês'),
+            ('hoje',      'Hoje'),
+            ('semana',    'Últimos 7 dias'),
+            ('mes',       'Este mês'),
             ('trimestre', 'Trimestre'),
-            ('ano', 'Este ano'),
+            ('ano',       'Este ano'),
         ],
+        'labels_grafico': json.dumps(labels_grafico),
+        'dados_vendas':   json.dumps(dados_vendas),
+        'dados_lucro':    json.dumps(dados_lucro),
     }
     return render(request, 'perfumes/dashboard.html', context)
 
