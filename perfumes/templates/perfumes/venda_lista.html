@@ -1,100 +1,219 @@
 {% extends 'perfumes/base.html' %}
 {% block title %}Vendas - Grava Perfumes{% endblock %}
+
 {% block content %}
 <div class="space-y-6">
+
     <!-- Header -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-            <h1 class="text-3xl font-bold text-grava-purple">Vendas</h1>
-            <p class="text-gray-500 mt-1">Gerencie todas as suas vendas</p>
+            <h1 class="text-3xl font-bold text-grava-charcoal">Vendas</h1>
+            <p class="text-gray-500 mt-1">Arraste os cards para alterar o status</p>
         </div>
-        <a href="{% url 'venda_criar' %}" class="btn-grava px-5 py-2.5 rounded-lg shadow-grava text-sm font-medium">
+        <a href="{% url 'venda_criar' %}" class="btn-grava px-5 py-2.5 rounded-lg text-sm">
             <i class="fas fa-plus mr-2"></i>Nova Venda
         </a>
     </div>
 
-    <!-- Filtro -->
-    <div class="card-grava rounded-2xl shadow-grava-lg p-6">
-        <form method="get" class="flex gap-4">
-            <div class="flex-1">
-                <select name="status" class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-grava-coral focus:border-grava-coral transition text-sm">
-                    <option value="">Todos os status</option>
-                    {% for value, label in status_choices %}
-                    <option value="{{ value }}" {% if request.GET.status == value %}selected{% endif %}>{{ label }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <button type="submit" class="btn-grava px-6 py-2.5 rounded-lg text-sm font-medium">
-                <i class="fas fa-filter mr-2"></i>Filtrar
+    <!-- Busca -->
+    <div class="card-grava rounded-2xl shadow-grava-lg p-4">
+        <form method="get" class="flex gap-3">
+            <input type="text" name="busca" value="{{ busca }}"
+                placeholder="Buscar por cliente ou nº da venda..."
+                class="flex-1 px-4 py-2 border border-gray-200 rounded-lg text-sm">
+            <button type="submit" class="btn-grava px-5 py-2 rounded-lg text-sm">
+                <i class="fas fa-search mr-2"></i>Buscar
             </button>
+            {% if busca %}
+            <a href="{% url 'venda_lista' %}" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg text-sm hover:bg-gray-200 transition flex items-center">
+                <i class="fas fa-times mr-1"></i>Limpar
+            </a>
+            {% endif %}
         </form>
     </div>
 
-    <!-- Tabela -->
-    <div class="card-grava rounded-2xl shadow-grava-lg overflow-hidden">
-        <table class="w-full">
-            <thead>
-                <tr class="border-b border-gray-100">
-                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">ID</th>
-                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Cliente</th>
-                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Data</th>
-                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Valor Total</th>
-                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Ações</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-50">
-                {% for venda in vendas %}
-                <tr class="hover:bg-gray-50 transition">
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="text-sm font-semibold text-grava-purple">#{{ venda.id }}</span>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full gradient-beige-grava flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-user text-grava-purple text-xs"></i>
-                            </div>
-                            <span class="text-sm font-medium text-gray-900">{{ venda.cliente.nome }}</span>
+    <!-- Toast de feedback -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 hidden">
+        <div class="bg-grava-charcoal text-white px-5 py-3 rounded-xl shadow-xl text-sm font-medium flex items-center gap-3">
+            <i class="fas fa-check-circle text-grava-gold"></i>
+            <span id="toast-msg">Status atualizado</span>
+        </div>
+    </div>
+
+    <!-- Kanban Board -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+        {% for col in colunas %}
+        <div class="flex flex-col gap-3">
+
+            <!-- Cabeçalho da coluna -->
+            <div class="flex items-center justify-between px-1">
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full
+                        {% if col.cor == 'yellow' %}bg-yellow-400
+                        {% elif col.cor == 'blue' %}bg-blue-500
+                        {% elif col.cor == 'green' %}bg-green-500
+                        {% else %}bg-red-400{% endif %}">
+                    </span>
+                    <h2 class="font-semibold text-grava-charcoal text-sm">{{ col.label }}</h2>
+                    <span class="bg-gray-100 text-gray-500 text-xs font-semibold px-2 py-0.5 rounded-full">
+                        {{ col.vendas|length }}
+                    </span>
+                </div>
+                {% if col.total > 0 %}
+                <span class="text-xs font-semibold text-grava-gold">
+                    R$ {{ col.total|floatformat:2 }}
+                </span>
+                {% endif %}
+            </div>
+
+            <!-- Zona droppable -->
+            <div id="col-{{ col.status }}"
+                 data-status="{{ col.status }}"
+                 class="kanban-col min-h-32 flex flex-col gap-3 p-2 rounded-2xl transition-colors duration-200
+                    {% if col.cor == 'yellow' %}bg-yellow-50/60
+                    {% elif col.cor == 'blue' %}bg-blue-50/60
+                    {% elif col.cor == 'green' %}bg-green-50/60
+                    {% else %}bg-red-50/60{% endif %}">
+
+                {% for venda in col.vendas %}
+                <!-- Card da venda -->
+                <div class="kanban-card bg-white rounded-xl shadow-sm border border-gray-100 p-4 cursor-grab active:cursor-grabbing hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
+                     data-id="{{ venda.id }}"
+                     data-status="{{ venda.status }}">
+
+                    <!-- Topo do card -->
+                    <div class="flex items-start justify-between mb-3">
+                        <span class="text-xs font-bold text-gray-400">#{{ venda.id }}</span>
+                        <span class="text-xs font-medium text-gray-400">{{ venda.data_venda|date:"d/m/Y" }}</span>
+                    </div>
+
+                    <!-- Cliente -->
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-user text-gray-400 text-xs"></i>
                         </div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="text-sm text-gray-700">{{ venda.data_venda|date:"d/m/Y" }}</span>
-                        <span class="text-xs text-gray-400 block">{{ venda.data_venda|date:"H:i" }}</span>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="badge-status
-                            {% if venda.status == 'E' %}bg-green-100 text-green-700
-                            {% elif venda.status == 'C' %}bg-blue-100 text-blue-700
-                            {% elif venda.status == 'P' %}bg-yellow-100 text-yellow-700
-                            {% else %}bg-red-100 text-red-700{% endif %}">
-                            {{ venda.get_status_display }}
+                        <span class="text-sm font-semibold text-grava-charcoal truncate">{{ venda.cliente.nome }}</span>
+                    </div>
+
+                    <!-- Itens resumo -->
+                    {% with total_itens=venda.itens.count %}
+                    {% if total_itens > 0 %}
+                    <p class="text-xs text-gray-400 mb-3">
+                        <i class="fas fa-spray-can mr-1"></i>
+                        {{ total_itens }} item{{ total_itens|pluralize:",ns" }}
+                    </p>
+                    {% endif %}
+                    {% endwith %}
+
+                    <!-- Rodapé do card -->
+                    <div class="flex items-center justify-between pt-3 border-t border-gray-50">
+                        <span class="text-sm font-bold text-grava-charcoal">
+                            R$ {{ venda.valor_total|floatformat:2 }}
                         </span>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="text-sm font-bold text-grava-coral">R$ {{ venda.valor_total|floatformat:2 }}</span>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <a href="{% url 'venda_detalhe' venda.pk %}" class="text-grava-coral hover:text-grava-purple font-medium text-sm transition">
-                            <i class="fas fa-eye mr-1"></i>Ver detalhes
+                        <a href="{% url 'venda_detalhe' venda.pk %}"
+                           class="text-xs text-grava-gold hover:text-grava-charcoal font-medium transition"
+                           onclick="event.stopPropagation()">
+                            Ver <i class="fas fa-arrow-right ml-0.5 text-xs"></i>
                         </a>
-                    </td>
-                </tr>
+                    </div>
+                </div>
                 {% empty %}
-                <tr>
-                    <td colspan="6" class="px-6 py-16 text-center">
-                        <div class="w-16 h-16 rounded-2xl gradient-beige-grava flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-shopping-cart text-grava-purple text-2xl"></i>
-                        </div>
-                        <p class="text-gray-500 text-lg font-medium mb-2">Nenhuma venda encontrada</p>
-                        <p class="text-gray-400 text-sm mb-6">Comece registrando sua primeira venda</p>
-                        <a href="{% url 'venda_criar' %}" class="btn-grava px-6 py-3 rounded-lg inline-block">
-                            <i class="fas fa-plus mr-2"></i>Nova Venda
-                        </a>
-                    </td>
-                </tr>
+                <!-- Estado vazio -->
+                <div class="empty-placeholder flex flex-col items-center justify-center py-8 text-center opacity-50">
+                    <i class="fas fa-inbox text-gray-300 text-2xl mb-2"></i>
+                    <p class="text-xs text-gray-400">Nenhuma venda</p>
+                </div>
                 {% endfor %}
-            </tbody>
-        </table>
+            </div>
+        </div>
+        {% endfor %}
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+<script>
+const CSRF = '{{ csrf_token }}';
+
+function showToast(msg) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    toast.classList.remove('hidden');
+    setTimeout(() => toast.classList.add('hidden'), 2500);
+}
+
+function updateStatus(vendaId, novoStatus) {
+    fetch(`/vendas/${vendaId}/status-ajax/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': CSRF,
+        },
+        body: JSON.stringify({ status: novoStatus }),
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.ok) {
+            showToast('Status atualizado com sucesso');
+            // Atualiza o badge do card
+            const card = document.querySelector(`[data-id="${vendaId}"]`);
+            if (card) card.dataset.status = novoStatus;
+            // Atualiza contadores das colunas
+            updateCounters();
+        } else {
+            showToast('Erro ao atualizar status');
+        }
+    })
+    .catch(() => showToast('Erro de conexão'));
+}
+
+function updateCounters() {
+    document.querySelectorAll('.kanban-col').forEach(col => {
+        const cards = col.querySelectorAll('.kanban-card').length;
+        const header = col.closest('.flex.flex-col').querySelector('.rounded-full.bg-gray-100');
+        if (header) header.textContent = cards;
+
+        // Mostra/esconde placeholder vazio
+        const placeholder = col.querySelector('.empty-placeholder');
+        if (placeholder) {
+            placeholder.style.display = cards > 0 ? 'none' : 'flex';
+        }
+    });
+}
+
+// Inicializa Sortable em cada coluna
+document.querySelectorAll('.kanban-col').forEach(col => {
+    Sortable.create(col, {
+        group: 'vendas',          // permite mover entre colunas
+        animation: 180,
+        ghostClass: 'opacity-30',
+        dragClass: 'rotate-1',
+        handle: '.kanban-card',
+        filter: 'a',              // links não disparam drag
+        preventOnFilter: false,
+
+        onEnd(evt) {
+            const card      = evt.item;
+            const vendaId   = card.dataset.id;
+            const novoStatus = evt.to.dataset.status;
+            const statusAnt  = card.dataset.status;
+
+            if (novoStatus !== statusAnt) {
+                updateStatus(vendaId, novoStatus);
+            }
+        },
+
+        // Feedback visual ao entrar na coluna
+        onEnter(evt) {
+            evt.to.classList.add('ring-2', 'ring-grava-gold', 'ring-offset-1');
+        },
+        onLeave(evt) {
+            evt.from.classList.remove('ring-2', 'ring-grava-gold', 'ring-offset-1');
+        },
+    });
+});
+
+updateCounters();
+</script>
 {% endblock %}

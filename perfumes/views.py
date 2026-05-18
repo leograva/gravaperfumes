@@ -297,16 +297,52 @@ def cliente_detalhe(request, pk):
 # Views de Vendas
 @login_required(login_url='login')
 def venda_lista(request):
-    vendas = Venda.objects.select_related('cliente').prefetch_related('itens')
-    
-    status = request.GET.get('status')
-    if status:
-        vendas = vendas.filter(status=status)
-    
+    vendas = Venda.objects.select_related('cliente').prefetch_related('itens').order_by('-data_venda')
+
+    busca = request.GET.get('busca', '').strip()
+    if busca:
+        vendas = vendas.filter(
+            Q(cliente__nome__icontains=busca) | Q(id__icontains=busca)
+        )
+
+    colunas = [
+        {'status': 'P', 'label': 'Pendente',   'cor': 'yellow', 'icon': 'fa-clock'},
+        {'status': 'C', 'label': 'Confirmada', 'cor': 'blue',   'icon': 'fa-check-circle'},
+        {'status': 'E', 'label': 'Entregue',   'cor': 'green',  'icon': 'fa-box-open'},
+        {'status': 'X', 'label': 'Cancelada',  'cor': 'red',    'icon': 'fa-times-circle'},
+    ]
+    for col in colunas:
+        col['vendas'] = [v for v in vendas if v.status == col['status']]
+        col['total']  = sum(v.valor_total for v in col['vendas'])
+
     return render(request, 'perfumes/venda_lista.html', {
-        'vendas': vendas,
-        'status_choices': Venda.STATUS_CHOICES
+        'colunas': colunas,
+        'busca': busca,
     })
+
+
+@login_required(login_url='login')
+def venda_atualizar_status_ajax(request, pk):
+    """Endpoint AJAX para drag and drop do Kanban"""
+    import json
+    from django.http import JsonResponse
+
+    if request.method != 'POST':
+        return JsonResponse({'ok': False}, status=405)
+
+    venda = get_object_or_404(Venda, pk=pk)
+    try:
+        data = json.loads(request.body)
+        novo_status = data.get('status', '')
+    except (json.JSONDecodeError, AttributeError):
+        novo_status = request.POST.get('status', '')
+
+    if novo_status not in dict(Venda.STATUS_CHOICES):
+        return JsonResponse({'ok': False, 'erro': 'Status inválido'}, status=400)
+
+    venda.status = novo_status
+    venda.save(update_fields=['status'])
+    return JsonResponse({'ok': True, 'status': novo_status})
 
 
 @login_required(login_url='login')
